@@ -1,0 +1,65 @@
+def add_time(start, duration, day = None):
+
+    added_days = 0
+    days = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+
+    # Remove AM and PM
+    time, period = start.split()
+    
+    # Extract hour and minute
+    hour, minute = time.split(':')
+    hour = int(hour)
+    minute = int(minute)
+
+    # Extract new hour and minute
+    dur_hour, dur_minute = duration.split(':')
+    dur_hour = int(dur_hour)
+    dur_minute = int(dur_minute)
+
+    # Convert into 24 hour format
+    if period == 'PM' and hour != 12:
+        hour += 12
+    elif period == 'AM' and hour == 12:
+        hour = 0
+
+    # Calculate new hour and minute
+    total_minutes = hour*60 + dur_hour*60 + minute + dur_minute
+    new_hour = (total_minutes // 60) % 24
+    new_minute = total_minutes % 60
+    added_days = total_minutes // (24 * 60)
+    
+    #Make it back into 12 hour format
+    if new_hour == 0:
+        display_hour = 12
+        suffix = 'AM'
+    elif new_hour < 12:
+        display_hour = new_hour
+        suffix = 'AM'
+    elif new_hour == 12:
+        display_hour = 12
+        suffix = 'PM'
+    else:
+        display_hour = new_hour - 12
+        suffix = 'PM'
+
+    # Format time
+    new_time = f'{display_hour}:{new_minute:02} {suffix}'
+
+    #Change days
+    if day:
+        day = day.strip().capitalize()
+        # Find the day inputted
+        day_index = days.index(day)
+        new_day = days[(day_index + added_days) % 7]
+        new_time += f', {new_day}'
+
+    # Add days
+    if added_days:
+        if added_days == 1:
+            new_time += ' (next day)'
+        else:
+            new_time += f' ({added_days} days later)'
+
+    return new_time
+
+add_time('3:30 PM', '2:12')
